@@ -1,0 +1,34 @@
+https://ragroup.ind.in/api/kyc_settings
+security_authentication_id=d347774d04690c2c5e7457a8a03e02e7
+security_token=2b45da5375d29a009023e25f27a2ddd4
+employee_id=1
+[
+    {
+        				'error_code': "0",
+        				'pan_verification': "1"
+		                        'employee_pan_verification_pan_no': "employee_pan_verification_pan_no"
+		                        'employee_pan_verification_pan_name': "employee_pan_verification_pan_name"
+		                        'bank_verification': "employee_bank_verification"
+		                        'employee_bank_verification_acc_no': "employee_bank_verification_acc_no"
+		                        'employee_bank_verification_ifsc': "employee_bank_verification_ifsc"
+		                        'employee_bank_verification_acc_holder_name': "employee_bank_verification_acc_holder_name"
+		                        'aadhar_verification': "1"
+		                        'employee_aadhar_no': "employee_aadhar_no"
+		                        'employee_aadhar_full_name': "employee_aadhar_full_name"
+		                        'employee_aadhar_dob': "employee_aadhar_dob"
+		                        'employee_aadhar_gender': "employee_aadhar_gender"
+		                        'employee_aadhar_country': "employee_aadhar_country"
+		                        'employee_aadhar_state': "employee_aadhar_state"
+		                        'employee_aadhar_po': "employee_aadhar_po"
+		                        'employee_aadhar_loc': "employee_aadhar_loc"
+		                        'employee_aadhar_street': "employee_aadhar_street"
+		                        'employee_aadhar_house': "employee_aadhar_house"
+		                        'employee_aadhar_landmark': "employee_aadhar_landmark"
+		                        'employee_aadhar_zip': "employee_aadhar_zip"
+		                        
+    }
+]
+
+if(pan_verification==1){show the pan details}
+if(bank_verification==1){show the bank details}
+if(aadhar_verification==1){show the aadhar details}

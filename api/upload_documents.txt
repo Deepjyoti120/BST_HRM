@@ -1,0 +1,13 @@
+https://ragroup.ind.in/api/upload_documents
+security_authentication_id=d347774d04690c2c5e7457a8a03e02e7
+security_token=2b45da5375d29a009023e25f27a2ddd4
+employee_id=1
+aadhar_card=base64
+pan_card=base64
+bank_passbook=base64
+[
+    {
+        "error_code": "0",
+        "message": "1",
+    }
+]

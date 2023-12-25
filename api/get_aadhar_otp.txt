@@ -1,0 +1,14 @@
+https://ragroup.ind.in/api/get_aadhar_otp
+security_authentication_id=d347774d04690c2c5e7457a8a03e02e7
+security_token=2b45da5375d29a009023e25f27a2ddd4
+employee_id=1
+aadhar_no='123456789012'
+[
+    {
+        "error_code": "0",
+        "message": "1",
+	"request_id": "QWE1243"
+    }
+]
+
+if(message==0 and equest_id==''){ Invalid Aadhar No. }else{ OTP sent to registered mobile no.}
