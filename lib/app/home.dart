@@ -227,13 +227,11 @@ class _HomePageState extends State<HomePage> {
                                       color: AppColor.textgray, blurRadius: 5)
                                 ]),
                             child: user.employeePhoto != null
-                                ? ClipOval(
-                                    child: Image.network(
-                                      user.employeePhoto!,
-                                      height: height / 36,
-                                      // fit: BoxFit.fitWidth,
-                                    ),
-                                  )
+                                ? Image.network(
+                                  user.employeePhoto!,
+                                  height: height / 36,
+                                  // fit: BoxFit.fitWidth,
+                                )
                                 : Image.asset(
                                     AssetImages.avtar,
                                     height: height / 36,

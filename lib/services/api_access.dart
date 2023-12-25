@@ -217,9 +217,7 @@ class ApiAccess {
     return false;
   }
 
-  Future<KycSettingModel?> kycSettings({
-    required String employeeId,
-  }) async {
+  Future<KycSettingModel?> kycSettings({required String employeeId}) async {
     try {
       final response = await _dio.post(
         'kyc_settings',

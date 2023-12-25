@@ -2,7 +2,6 @@ import 'package:bsthrm/app/page/verify_pages/aadhar_verify.dart';
 import 'package:bsthrm/app/page/verify_pages/bank_verify.dart';
 import 'package:bsthrm/app/page/verify_pages/kyc_settings.dart';
 import 'package:bsthrm/app/page/verify_pages/pan_verify.dart';
-import 'package:bsthrm/app/page/verify_pages/upload_documents.dart';
 import 'package:flutter/material.dart';
 
 class HomeMenuItems extends StatefulWidget {
@@ -62,25 +61,31 @@ class _HomeMenuItemsState extends State<HomeMenuItems> {
                       ],
                     )),
                 const PopupMenuItem(
-                    value: 2,
-                    child: Row(
-                      children: [
-                        Icon(Icons.verified_rounded),
-                        SizedBox(width: 4),
-                        Text("KYC Verification")
-                      ],
-                    )),
+                  value: 2,
+                  child: Row(
+                    children: [
+                      Icon(Icons.verified_rounded),
+                      SizedBox(width: 4),
+                      Text("Aadhar Verification")
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 3,
+                  child: Row(
+                    children: [
+                      Icon(Icons.verified_rounded),
+                      SizedBox(width: 4),
+                      Text("KYC Settings")
+                    ],
+                  ),
+                ),
               ]).then((value) {
             if (mounted) {
               arrowUp = false;
               setState(() {});
             }
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const KycSettings(),
-              ),
-            );
+
             if (value != null) {
               if (mounted) {
                 if (value == 0) {
@@ -97,7 +102,21 @@ class _HomeMenuItemsState extends State<HomeMenuItems> {
                       builder: (context) => const BankVerifyVerification(),
                     ),
                   );
-                } else if (value == 2) {}
+                } else if (value == 2) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AadharVerification(),
+                    ),
+                  );
+                } else if (value == 3) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const KycSettings(),
+                    ),
+                  );
+                }
               }
             }
           });
