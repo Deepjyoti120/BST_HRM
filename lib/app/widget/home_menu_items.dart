@@ -76,6 +76,16 @@ class _HomeMenuItemsState extends State<HomeMenuItems> {
                     children: [
                       Icon(Icons.verified_rounded),
                       SizedBox(width: 4),
+                      Text("Documents Upload")
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 4,
+                  child: Row(
+                    children: [
+                      Icon(Icons.verified_rounded),
+                      SizedBox(width: 4),
                       Text("KYC Settings")
                     ],
                   ),
@@ -109,7 +119,14 @@ class _HomeMenuItemsState extends State<HomeMenuItems> {
                       builder: (context) => const AadharVerification(),
                     ),
                   );
-                } else if (value == 3) {
+                }else if (value == 3) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const KycSettings(),
+                    ),
+                  );
+                } else if (value == 4) {
                   Navigator.push(
                     context,
                     MaterialPageRoute(

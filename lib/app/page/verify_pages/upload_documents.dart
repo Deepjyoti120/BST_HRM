@@ -28,7 +28,7 @@ class _UploadDocumentsState extends State<UploadDocuments> {
 
   Future<String?> _takePictureAndConvertToBase64() async {
     final XFile? pickedFile =
-        await _picker.pickImage(source: ImageSource.camera);
+        await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       final bytes = await pickedFile.readAsBytes();
       final img.Image? originalImage = img.decodeImage(bytes);
@@ -38,9 +38,6 @@ class _UploadDocumentsState extends State<UploadDocuments> {
         final img.PngEncoder encoder = img.PngEncoder(level: 1);
         final List<int> resizedBytes = encoder.encodeImage(resizedImage);
         final Uint8List resizedUint8List = Uint8List.fromList(resizedBytes);
-        // setState(() {
-        //   _imageBytes = resizedUint8List;
-        // });
         return base64Encode(resizedUint8List);
       }
     }
@@ -71,7 +68,7 @@ class _UploadDocumentsState extends State<UploadDocuments> {
                   }
                 },
                 child: Container(
-                  height: 120,
+                  // height: 120,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
@@ -104,8 +101,8 @@ class _UploadDocumentsState extends State<UploadDocuments> {
                   }
                 },
                 child: Container(
-                  height: 120,
                   width: double.infinity,
+                  clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                   ),
@@ -137,7 +134,7 @@ class _UploadDocumentsState extends State<UploadDocuments> {
                   }
                 },
                 child: Container(
-                  height: 120,
+                  // height: 120,
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
@@ -151,8 +148,8 @@ class _UploadDocumentsState extends State<UploadDocuments> {
                           ? const Icon(Icons.add_a_photo)
                           : Image.memory(
                               base64Decode(panCard),
-                              height: 100,
                               width: 100,
+                              height: 100,
                             ),
                       const SizedBox(height: 10),
                     ],
@@ -167,9 +164,7 @@ class _UploadDocumentsState extends State<UploadDocuments> {
                   ),
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      setState(() {
-                        isLoading = true;
-                      });
+                      setState(() => isLoading = true);
                       ApiAccess()
                           .uploadDocuments(
                         aadharCard: aadharCard,

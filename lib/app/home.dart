@@ -1,16 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:bsthrm/app/drawer.dart';
 import 'package:bsthrm/app/log/claim_insert.dart';
 import 'package:bsthrm/app/log/claim_view.dart';
 import 'package:bsthrm/app/page/attendanceview.dart';
 import 'package:bsthrm/app/page/leave/applyleav.dart';
 import 'package:bsthrm/app/page/leave/viewleave.dart';
-import 'package:bsthrm/app/widget/home_menu_items.dart';
 import 'package:bsthrm/global/prefsname.dart';
 import 'package:bsthrm/helper/api_helper.dart';
 import 'package:bsthrm/viewmodel/cubit/app_state_cubit.dart';
-import 'package:bsthrm/viewmodel/get_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart';
@@ -186,66 +184,20 @@ class _HomePageState extends State<HomePage> {
     size = MediaQuery.of(context).size;
     height = size.height;
     width = size.width;
-    return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  horizontal: width / 36, vertical: height / 36),
-              child: Column(
-                children: [
-                  Row(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Hi, ${user.employeeName!.length > 20 ? '${user.employeeName?.substring(0, 20)}..' : user.employeeName}",
-                            style: hsSemiBold.copyWith(fontSize: 20),
-                          ),
-                          Text(
-                            // "Let’s make this day productive".tr,
-                            user.empid ?? "",
-                            style: hsRegular.copyWith(fontSize: 16),
-                          ),
-                        ],
-                      ),
-                      const Spacer(),
-                      Row(
-                        children: [
-                          const HomeMenuItems(),
-                          Container(
-                            width: height / 16,
-                            height: height / 16,
-                            decoration: BoxDecoration(
-                                color: AppColor.white,
-                                borderRadius: BorderRadius.circular(4),
-                                boxShadow: const [
-                                  BoxShadow(
-                                      color: AppColor.textgray, blurRadius: 5)
-                                ]),
-                            child: user.employeePhoto != null
-                                ? Image.network(
-                                  user.employeePhoto!,
-                                  height: height / 36,
-                                  // fit: BoxFit.fitWidth,
-                                )
-                                : Image.asset(
-                                    AssetImages.avtar,
-                                    height: height / 36,
-                                  ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                ],
-              ),
+    return Stack(
+      children: [
+        Scaffold(
+          drawer: const AppDrawer(), //home menu
+          appBar: AppBar(
+            centerTitle: false,
+            title: Text(
+              "hi, ${user.employeeName!.length > 20 ? '${user.employeeName?.substring(0, 20)}..' : user.employeeName}-${user.empid ?? ""}",
+              style: hsSemiBold.copyWith(fontSize: 20),
             ),
-            Container(
-              margin: const EdgeInsets.only(top: 90),
+          ),
+          body: SafeArea(
+            child: Container(
+              margin: const EdgeInsets.only(top: 12),
               color: Colors.white,
               child: SingleChildScrollView(
                 child: Container(
@@ -253,9 +205,6 @@ class _HomePageState extends State<HomePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: height / 36,
-                      ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -749,48 +698,49 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            Container(
-              margin: const EdgeInsets.only(top: 90),
-              child: Visibility(
-                visible: isLoading,
-                child: Container(
-                  color: Colors.black.withOpacity(0.6),
-                  // Adjust the opacity and color as needed
-                  child: const Center(
-                    child: SizedBox(
-                      width: 30,
-                      height: 30,
-                      child: CircularProgressIndicator(
-                        color: Colors.white, // Adjust the color of the loader
-                      ),
-                    ),
+          ),
+          // bottomNavigationBar: InkWell(
+          //   onTap: () async {
+          //     var navigator = Navigator.of(context);
+          //     SharedPreferences preferences =
+          //         await SharedPreferences.getInstance();
+          //     await preferences.clear();
+          //     print('All SharedPreferences values removed');
+          //     navigator.push(MaterialPageRoute(
+          //       builder: (context) {
+          //         return const LoginPage();
+          //       },
+          //     ));
+          //   },
+          //   child: Container(
+          //     height: 25,
+          //     margin: const EdgeInsets.all(10),
+          //     child: const Center(
+          //       child: Text("Log Out"),
+          //     ),
+          //   ),
+          // ),
+        ),
+        Container(
+          // margin: const EdgeInsets.only(top: 90),
+          child: Visibility(
+            visible: isLoading,
+            child: Container(
+              color: Colors.black.withOpacity(0.6),
+              // Adjust the opacity and color as needed
+              child: const Center(
+                child: SizedBox(
+                  width: 30,
+                  height: 30,
+                  child: CircularProgressIndicator(
+                    color: Colors.white, // Adjust the color of the loader
                   ),
                 ),
               ),
-            )
-          ],
-        ),
-      ),
-      bottomNavigationBar: InkWell(
-        onTap: () async {
-          var navigator = Navigator.of(context);
-          SharedPreferences preferences = await SharedPreferences.getInstance();
-          await preferences.clear();
-          print('All SharedPreferences values removed');
-          navigator.push(MaterialPageRoute(
-            builder: (context) {
-              return const LoginPage();
-            },
-          ));
-        },
-        child: Container(
-          height: 25,
-          margin: const EdgeInsets.all(10),
-          child: const Center(
-            child: Text("Log Out"),
+            ),
           ),
-        ),
-      ),
+        )
+      ],
     );
   }
 
