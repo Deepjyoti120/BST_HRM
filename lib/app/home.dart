@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                 1); // Adjust the compression level here (1 is just an example)
 
         // Encode resized image to PNG format with reduced quality
-        final List<int> resizedBytes = encoder.encodeImage(resizedImage);
+        final List<int> resizedBytes = encoder.encode(resizedImage);
 
         // Convert resized image bytes to Uint8List
         final Uint8List resizedUint8List = Uint8List.fromList(resizedBytes);
@@ -191,7 +191,7 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(
             centerTitle: false,
             title: Text(
-              "hi, ${user.employeeName!.length > 20 ? '${user.employeeName?.substring(0, 20)}..' : user.employeeName}-${user.empid ?? ""}",
+              "hi, ${(user.employeeName?.length ?? 0) > 20 ? '${user.employeeName?.substring(0, 20)}..' : user.employeeName}-${user.empid ?? ""}",
               style: hsSemiBold.copyWith(fontSize: 20),
             ),
           ),

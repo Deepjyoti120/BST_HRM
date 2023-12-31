@@ -22,41 +22,58 @@ class _SplashScreenState extends State<SplashScreen> {
     goup();
   }
 
-  goup() async {
-    var navigator = Navigator.of(context);
-    await Future.delayed(const Duration(seconds: 3));
-    SharedPreferences.getInstance().then((value) {
-      bool isLogin = value.getBool(IsLogin)??false;
-      if(isLogin){
-        navigator.push(MaterialPageRoute(
-          builder: (context) {
-            return const HomePage();
-          },
-        ));
-      }
-      else{
-        navigator.push(MaterialPageRoute(
-          builder: (context) {
-            return const LoginPage();
-          },
-        ));
-      }
-    });
+  bool isTop = true;
 
+  goup() async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      var navigator = Navigator.of(context);
+      setState(() => isTop = !isTop);
+      await Future.delayed(const Duration(seconds: 3));
+      SharedPreferences.getInstance().then((value) {
+        bool isLogin = value.getBool(IsLogin) ?? false;
+
+        if (isLogin) {
+          navigator.push(MaterialPageRoute(
+            builder: (context) {
+              return const HomePage();
+            },
+          ));
+        } else {
+          navigator.push(MaterialPageRoute(
+            builder: (context) {
+              return const LoginPage();
+            },
+          ));
+        }
+      });
+    });
   }
 
-  dynamic size;
-  double height = 0.00;
-  double width = 0.00;
+  // dynamic size;
+  // double height = 0.00;
+  // double width = 0.00;
+
   @override
   Widget build(BuildContext context) {
-    size = MediaQuery.of(context).size;
-    height = size.height;
-    width = size.width;
+    Size size = MediaQuery.of(context).size;
+
     return Scaffold(
       backgroundColor: AppColor.appcolor,
-      body: Center(
-          child: Image.asset(AssetImages.splashh,height: height/6,fit: BoxFit.fitHeight,)),
+      body: Container(
+        width: size.width,
+        height: size.height,
+        child: AnimatedAlign(
+          duration: const Duration(seconds: 1),
+          alignment: isTop ? Alignment.topCenter : Alignment.center,
+          child: Image.asset(
+            AssetImages.logo,
+            height: size.height / 6,
+            // fit: BoxFit.fitHeight,
+          ),
+        ),
+      ),
+      // body: Center(
+      //     child: Image.asset(AssetImages.splashh,height: height/6,fit: BoxFit.fitHeight,)),
     );
   }
 }

@@ -36,7 +36,7 @@ class _UploadDocumentsState extends State<UploadDocuments> {
         final img.Image resizedImage =
             img.copyResize(originalImage, width: originalImage.width ~/ 2);
         final img.PngEncoder encoder = img.PngEncoder(level: 1);
-        final List<int> resizedBytes = encoder.encodeImage(resizedImage);
+        final List<int> resizedBytes = encoder.encode(resizedImage);
         final Uint8List resizedUint8List = Uint8List.fromList(resizedBytes);
         return base64Encode(resizedUint8List);
       }

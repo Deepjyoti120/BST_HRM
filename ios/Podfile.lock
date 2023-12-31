@@ -14,6 +14,8 @@ PODS:
     - Flutter
   - nb_utils (0.0.1):
     - Flutter
+  - printing (1.0.0):
+    - Flutter
   - ReachabilitySwift (5.0.0)
   - shared_preferences_foundation (0.0.1):
     - Flutter
@@ -30,6 +32,7 @@ DEPENDENCIES:
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - nb_utils (from `.symlinks/plugins/nb_utils/ios`)
+  - printing (from `.symlinks/plugins/printing/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - smart_auth (from `.symlinks/plugins/smart_auth/ios`)
 
@@ -53,6 +56,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   nb_utils:
     :path: ".symlinks/plugins/nb_utils/ios"
+  printing:
+    :path: ".symlinks/plugins/printing/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
   smart_auth:
@@ -66,6 +71,7 @@ SPEC CHECKSUMS:
   geolocator_apple: b741765c55dc21950e3e106e8b3584e55cf81ce5
   image_picker_ios: 4a8aadfbb6dc30ad5141a2ce3832af9214a705b5
   nb_utils: ada4338858d8827ec92fdab2a545206b4ba4cfb1
+  printing: 233e1b73bd1f4a05615548e9b5a324c98588640b
   ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
   shared_preferences_foundation: 5b919d13b803cadd15ed2dc053125c68730e5126
   smart_auth: 4bedbc118723912d0e45a07e8ab34039c19e04f2

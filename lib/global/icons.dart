@@ -36,6 +36,8 @@ class AssetImages {
   static String setting = "assets/dailoz_assets/dailoz_pngimage/Setting.png";
   static String logout = "assets/dailoz_assets/dailoz_pngimage/Logout.png";
   static String splashh = "assets/dailoz_assets/dailoz_pngimage/splashh.png";
+  static String logo = "assets/img/logo.png";
+  static String logogrey = "assets/img/logogrey.png";
 }
 
 class Svgimage {
