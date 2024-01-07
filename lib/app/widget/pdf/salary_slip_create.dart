@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:bsthrm/global/icons.dart';
+import 'package:bsthrm/model/salary_details_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -13,7 +14,8 @@ const PdfColor green = PdfColor.fromInt(0xff9ce5d0);
 const PdfColor lightGreen = PdfColor.fromInt(0xffcdf1e7);
 const sep = 120.0;
 
-Future<Uint8List> generateSalarySlip(PdfPageFormat format) async {
+Future<Uint8List> generateSalarySlip(
+    PdfPageFormat format, SalaryDetailsModel details) async {
   final doc = pw.Document(title: 'Salary Slip', author: 'Deepjyoti Baishya');
   final profileImage = pw.MemoryImage(
     (await rootBundle.load(AssetImages.logo)).buffer.asUint8List(),

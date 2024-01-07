@@ -1,5 +1,8 @@
 import 'package:bsthrm/app/widget/pdf/salary_slip_create.dart';
+import 'package:bsthrm/services/api_access.dart';
+import 'package:bsthrm/viewmodel/cubit/app_state_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 
@@ -11,25 +14,102 @@ class SalarySlip extends StatefulWidget {
 }
 
 class _SalarySlipState extends State<SalarySlip> {
+  // all bool for loading listview builder
+
+  List<bool> _loading = [];
   @override
   Widget build(BuildContext context) {
+    final userDetails = context.read<AppStateCubit>().userDetails;
     return Scaffold(
-      appBar: AppBar(),
-      // body: PdfPreview(
-      //   build: (format) => generateSalarySlip(PdfPageFormat.a4),
+      appBar: AppBar(
+        title: const Text("Salary Slip"),
+      ),
+      // body: Column(
+      //   children: [
+      //     ElevatedButton(
+      //       onPressed: () async {
+      //         await Printing.sharePdf(
+      //           bytes: await generateSalarySlip(PdfPageFormat.a4),
+      //           filename: 'my-document.pdf',
+      //         );
+      //       },
+      //       child: Text("data"),
+      //     )
+      //   ],
       // ),
-      // add button to download unit8List pdf
-      body: Column(
-        children: [
-          ElevatedButton(
-              onPressed: () async {
-                await Printing.sharePdf(
-                  bytes: await generateSalarySlip(PdfPageFormat.a4),
-                  filename: 'my-document.pdf',
+      // body with future builder with progress circular indicator
+      body: FutureBuilder(
+        future:
+            ApiAccess().salaryListByMonth(employeeId: userDetails!.employeeId!),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final snap = snapshot.data;
+            if (snap?.isEmpty ?? true) {
+              return const Center(
+                child: Text("No data found"),
+              );
+            }
+            return ListView.builder(
+              itemCount: 12,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final livedata = snap?[index];
+                _loading.add(false);
+                return Card(
+                  child: ListTile(
+                    title: Text(livedata?.month ?? ""),
+                    subtitle: Text(livedata?.year ?? ""),
+                    // title: const Text("Month"),
+                    // subtitle: const Text("Year"),
+                    trailing: ElevatedButton(
+                      // colors green
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                      ),
+                      onPressed: () async {
+                        setState(() {
+                          _loading[index] = true;
+                        });
+                        final salaryDetails = await ApiAccess()
+                            .fetchSalaryDetails(
+                                employeeId: userDetails.employeeId!,
+                                salaryDate: livedata?.salaryDate ?? "");
+                        await Printing.sharePdf(
+                          bytes: await generateSalarySlip(
+                              PdfPageFormat.a4, salaryDetails!),
+                          filename: livedata?.month ??
+                              "" +
+                                  (livedata!.year ?? '') +
+                                  (userDetails.employeeId ?? '') +
+                                  '.pdf',
+                        );
+                        setState(() {
+                          _loading[index] = false;
+                        });
+                      },
+                      child: _loading[index]
+                          ? const SizedBox(
+                              height: 14,
+                              width: 14,
+                              child: CircularProgressIndicator(
+                                  color: Colors.white))
+                          : const Text(
+                              "Download",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                    ),
+                  ),
                 );
               },
-              child: Text("data"))
-        ],
+            );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.black,
+              ),
+            );
+          }
+        },
       ),
     );
   }

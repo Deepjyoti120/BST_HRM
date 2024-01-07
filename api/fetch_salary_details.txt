@@ -1,0 +1,41 @@
+https://ragroup.ind.in/api/fetch_salary_details
+security_authentication_id=d347774d04690c2c5e7457a8a03e02e7
+security_token=2b45da5375d29a009023e25f27a2ddd4
+employee_id=3
+salary_date='26-12-2023'
+
+[
+    {
+        "empid": "D1001",
+        "employee_name": "SANGITA SARANIA",
+        "joining_date": "25-08-2023",
+        "pan": "LVXPS0853C",
+        "designation": "Chief Financial Officer",
+        "department": "DIKHITA INFOCOMM MANAGEMENT",
+        "location": "HQ",
+        "circle": "Assam",
+        "state": "ASSAM",
+        "bank": "ICICI",
+        "acc_no": "325201503067",
+        "ifsc": "ICIC0003252",
+        "pf_no": "",
+        "pf_uan": "",
+        "esic_no": "",
+        "work_days": "30",
+        "basic_pay": "14,700.00",
+        "hra": "7,350.00",
+        "special_pay": "0.00",
+        "variable_pay": "0.00",
+        "gross_salary": "22,050.00",
+        "travelling_allowance": "0.00",
+        "gross_earnings": "22,050.00",
+        "employee_pf": "1,764.00",
+        "employee_esi": "165.38",
+        "tds": "0.00",
+        "professional_tax": "0.00",
+        "leave_days": "",
+        "leave_deduction": "0.00",
+        "gross_deduction": "1,929.38",
+        "net_pay": "20,120.63 [Round: 20121] (Rupees Twenty Thousand One Hundred Twenty One  Only)"
+    }
+]

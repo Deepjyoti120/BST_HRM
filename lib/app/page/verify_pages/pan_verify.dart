@@ -2,7 +2,7 @@ import 'package:bsthrm/app/widget/custom_loading.dart';
 import 'package:bsthrm/services/api_access.dart';
 import 'package:bsthrm/viewmodel/cubit/app_state_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart'; 
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PanVerification extends StatefulWidget {
   const PanVerification({super.key});
@@ -15,6 +15,21 @@ class _PanVerificationState extends State<PanVerification> {
   final _formKey = GlobalKey<FormState>();
   final _panController = TextEditingController();
   bool isLoading = false;
+
+  //set from appstate pan number to textfield
+  @override
+  void initState() {
+    super.initState();
+    setPanNumber();
+  }
+
+  setPanNumber() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+      final appState = context.read<AppStateCubit>();
+      _panController.text = appState.userDetails!.employeePan!;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppStateCubit>();
@@ -30,6 +45,8 @@ class _PanVerificationState extends State<PanVerification> {
             children: [
               TextFormField(
                 controller: _panController,
+                // allow only readable
+                readOnly: true,
                 decoration: const InputDecoration(
                   labelText: "Enter Pan Number",
                   border: OutlineInputBorder(),

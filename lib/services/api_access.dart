@@ -1,4 +1,6 @@
 import 'package:bsthrm/model/key_settings_model.dart';
+import 'package:bsthrm/model/salary_details_model.dart';
+import 'package:bsthrm/model/salary_slip_model.dart';
 import 'package:bsthrm/model/user_details.dart';
 import 'package:bsthrm/utils/utils.dart';
 import 'package:dio/dio.dart';
@@ -227,6 +229,43 @@ class ApiAccess {
       if (data['error_code'].toString() == '0') {
         return KycSettingModel.fromJson(data);
       }
+    } on DioException catch (e) {
+      debugPrint(e.message);
+    }
+    return null;
+  } 
+  Future<List<SalarySlipModel>?> salaryListByMonth({
+    required String employeeId,
+  }) async {
+    try {
+      final response = await _dio.post(
+        'salary_list_by_month',
+        data: {'employee_id': employeeId},
+      );
+      var data = response.data;
+      return (data as List).map((e) => SalarySlipModel.fromJson(e)).toList();
+    } on DioException catch (e) {
+      debugPrint(e.message);
+    }
+    return null;
+  } 
+
+  Future<SalaryDetailsModel?> fetchSalaryDetails({
+    required String employeeId,
+    required String salaryDate,
+  }) async {
+    try {
+      final response = await _dio.post(
+        'fetch_salary_details',
+        data: {
+          'employee_id': employeeId,
+          'salary_date': salaryDate,
+        },
+      );
+      var data = response.data[0];
+      // if (data['error_code'].toString() == '0') {
+        return SalaryDetailsModel.fromJson(data);
+      // }
     } on DioException catch (e) {
       debugPrint(e.message);
     }

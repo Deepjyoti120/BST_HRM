@@ -16,6 +16,7 @@ class UserDetails {
   String? city;
   String? pincode;
   String? employeePhoto;
+  String? employeePan;
 
   UserDetails({
     this.errorCode,
@@ -35,6 +36,7 @@ class UserDetails {
     this.city,
     this.pincode,
     this.employeePhoto,
+    this.employeePan,
   });
 
   UserDetails.fromJson(Map<String, dynamic> json) {
@@ -55,6 +57,7 @@ class UserDetails {
     city = json['city'];
     pincode = json['pincode'];
     employeePhoto = json['employee_photo'];
+    employeePan = json['employee_pan'];
   }
 
   Map<String, dynamic> toJson() {
@@ -76,6 +79,7 @@ class UserDetails {
     data['city'] = city;
     data['pincode'] = pincode;
     data['employee_photo'] = employeePhoto;
+    data['employee_pan'] = employeePan;
     return data;
   }
 }
