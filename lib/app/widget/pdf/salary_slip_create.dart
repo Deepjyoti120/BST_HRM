@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:math';
 import 'dart:typed_data';
 import 'package:bsthrm/global/icons.dart';
 import 'package:bsthrm/model/salary_details_model.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
@@ -15,7 +13,14 @@ const PdfColor lightGreen = PdfColor.fromInt(0xffcdf1e7);
 const sep = 120.0;
 
 Future<Uint8List> generateSalarySlip(
-    PdfPageFormat format, SalaryDetailsModel details) async {
+  PdfPageFormat format, [
+  SalaryDetailsModel? details,
+  String? salaryDate, //26-12-2023
+]) async {
+  //  26-12-2023 convert to DateTime
+  DateTime date = DateFormat("dd-MM-yyyy").parse(salaryDate!);
+  // date to Dec 2023
+  String monthYear = DateFormat("MMM yyyy").format(date);
   final doc = pw.Document(title: 'Salary Slip', author: 'Deepjyoti Baishya');
   final profileImage = pw.MemoryImage(
     (await rootBundle.load(AssetImages.logo)).buffer.asUint8List(),
@@ -73,7 +78,7 @@ Future<Uint8List> generateSalarySlip(
                   pw.Padding(
                     padding: const pw.EdgeInsets.all(4),
                     child: pw.Text(
-                      'Pay Slip For The Month Of Dec 2023',
+                      'Pay Slip For The Month Of $monthYear',
                       style: pw.TextStyle(
                         fontSize: 12,
                         fontWeight: pw.FontWeight.bold,
@@ -82,14 +87,14 @@ Future<Uint8List> generateSalarySlip(
                   ),
                 ])),
             // pw.SizedBox(height: 10),
-            _EmployeeDetailsRow(),
+            _EmployeeDetailsRow(details!),
             // add divider
             pw.Container(
               height: 1.5,
               width: double.infinity,
               color: PdfColors.black,
             ),
-            _EarningTable(),
+            _EarningTable(details!),
             pw.Container(
               height: 0.5,
               width: double.infinity,
@@ -98,7 +103,7 @@ Future<Uint8List> generateSalarySlip(
             pw.Padding(
               padding: const pw.EdgeInsets.all(4),
               child: pw.Text(
-                'NET PAY: 20,120.63 [Round: 20121] (Rupees Twenty Thousand One Hundred Twenty One Only)',
+                details.netPay!,
                 style: pw.TextStyle(
                   fontSize: 10,
                   fontWeight: pw.FontWeight.bold,
@@ -219,8 +224,8 @@ Future<pw.PageTheme> _myPageTheme(PdfPageFormat format) async {
 //   }
 // }
 class _EmployeeDetailsRow extends pw.StatelessWidget {
-  _EmployeeDetailsRow();
-
+  _EmployeeDetailsRow(this.details);
+  final SalaryDetailsModel details;
   @override
   pw.Widget build(pw.Context context) {
     return pw.Table(
@@ -246,7 +251,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
             ),
             pw.Padding(
               padding: const pw.EdgeInsets.all(4.0),
-              child: pw.Text('D1001'),
+              child: pw.Text(details.empid!),
             ),
             pw.Padding(
               padding: const pw.EdgeInsets.all(4.0),
@@ -255,7 +260,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
             ),
             pw.Padding(
               padding: const pw.EdgeInsets.all(4.0),
-              child: pw.Text('ASSAM'),
+              child: pw.Text(details.state!),
             ),
           ],
         ),
@@ -267,7 +272,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
-            child: pw.Text('SANGITA SARANIA'),
+            child: pw.Text(details.employeeName!),
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
@@ -276,7 +281,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
-            child: pw.Text('ICICI'),
+            child: pw.Text(details.bank!),
           ),
         ]),
         pw.TableRow(children: [
@@ -287,7 +292,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
-            child: pw.Text('25-08-2023'),
+            child: pw.Text(details.joiningDate!),
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
@@ -296,7 +301,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
-            child: pw.Text('325201503067'),
+            child: pw.Text(details.accNo!),
           ),
         ]),
         pw.TableRow(children: [
@@ -307,7 +312,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
-            child: pw.Text('LVXPS0853C'),
+            child: pw.Text(details.pan!),
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
@@ -316,7 +321,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
-            child: pw.Text('ICIC0003252'),
+            child: pw.Text(details.ifsc!),
           ),
         ]),
         pw.TableRow(children: [
@@ -327,7 +332,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
-            child: pw.Text('Chief Financial Officer'),
+            child: pw.Text(details.designation!),
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
@@ -336,7 +341,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
-            child: pw.Text(''),
+            child: pw.Text(details.pfNo!),
           ),
         ]),
         pw.TableRow(children: [
@@ -347,7 +352,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
-            child: pw.Text('DIKHITA INFOCOMM MANAGEMENT'),
+            child: pw.Text(details.department!),
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
@@ -356,7 +361,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
-            child: pw.Text(''),
+            child: pw.Text(details.pfUan!),
           ),
         ]),
         pw.TableRow(children: [
@@ -367,7 +372,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
-            child: pw.Text('GUWAHATI'),
+            child: pw.Text(details.location!),
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
@@ -376,7 +381,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
           ),
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
-            child: pw.Text(''),
+            child: pw.Text(details.esicNo!),
           ),
         ]),
         pw.TableRow(
@@ -388,7 +393,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
             ),
             pw.Padding(
               padding: const pw.EdgeInsets.all(4.0),
-              child: pw.Text('Assam'),
+              child: pw.Text(details.circle!),
             ),
             pw.Padding(
               padding: const pw.EdgeInsets.all(4.0),
@@ -397,7 +402,7 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
             ),
             pw.Padding(
               padding: const pw.EdgeInsets.all(4.0),
-              child: pw.Text('30'),
+              child: pw.Text(details.workDays!),
             ),
           ],
         ),
@@ -407,8 +412,8 @@ class _EmployeeDetailsRow extends pw.StatelessWidget {
 }
 
 class _EarningTable extends pw.StatelessWidget {
-  _EarningTable();
-
+  _EarningTable(this.details);
+  final SalaryDetailsModel details;
   @override
   pw.Widget build(pw.Context context) {
     return pw.Table(
@@ -462,7 +467,7 @@ class _EarningTable extends pw.StatelessWidget {
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
             child: pw.Text(
-              '14,700.00',
+              details.basicPay!,
               textAlign: pw.TextAlign.right,
             ),
           ),
@@ -473,16 +478,11 @@ class _EarningTable extends pw.StatelessWidget {
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
             child: pw.Text(
-              '1,764.00',
+              details.employeePf!,
               textAlign: pw.TextAlign.right,
             ),
           ),
         ]),
-//         HRA 7,350.00 EMPLOYEE ESI 165.38
-// SPECIAL PAY 0.00 TDS 0.00
-// VARIABLE PAY 0.00 PROFESSIONAL TAX 0.00
-// GROSS SALARY 22,050.00 LEAVE 0.00
-//  add in table
         pw.TableRow(children: [
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
@@ -491,7 +491,7 @@ class _EarningTable extends pw.StatelessWidget {
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
             child: pw.Text(
-              '7,350.00',
+              details.hra!,
               textAlign: pw.TextAlign.right,
             ),
           ),
@@ -502,7 +502,7 @@ class _EarningTable extends pw.StatelessWidget {
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
             child: pw.Text(
-              '165.38',
+              details.employeeEsi!,
               textAlign: pw.TextAlign.right,
             ),
           ),
@@ -515,7 +515,7 @@ class _EarningTable extends pw.StatelessWidget {
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
             child: pw.Text(
-              '0.00',
+              details.specialPay!,
               textAlign: pw.TextAlign.right,
             ),
           ),
@@ -526,7 +526,7 @@ class _EarningTable extends pw.StatelessWidget {
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
             child: pw.Text(
-              '0.00',
+              details.tds!,
               textAlign: pw.TextAlign.right,
             ),
           ),
@@ -539,7 +539,7 @@ class _EarningTable extends pw.StatelessWidget {
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
             child: pw.Text(
-              '0.00',
+              details.variablePay!,
               textAlign: pw.TextAlign.right,
             ),
           ),
@@ -550,7 +550,7 @@ class _EarningTable extends pw.StatelessWidget {
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
             child: pw.Text(
-              '0.00',
+              details.professionalTax!,
               textAlign: pw.TextAlign.right,
             ),
           ),
@@ -563,7 +563,7 @@ class _EarningTable extends pw.StatelessWidget {
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
             child: pw.Text(
-              '22,050.00',
+              details.grossSalary!,
               textAlign: pw.TextAlign.right,
             ),
           ),
@@ -574,7 +574,7 @@ class _EarningTable extends pw.StatelessWidget {
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
             child: pw.Text(
-              '0.00',
+              details.leaveDays!,
               textAlign: pw.TextAlign.right,
             ),
           ),
@@ -589,7 +589,7 @@ class _EarningTable extends pw.StatelessWidget {
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
             child: pw.Text(
-              '0.00',
+              details.travellingAllowance!,
               textAlign: pw.TextAlign.right,
             ),
           ),
@@ -616,7 +616,7 @@ class _EarningTable extends pw.StatelessWidget {
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
             child: pw.Text(
-              '22,050.00',
+              details.grossEarnings!,
               textAlign: pw.TextAlign.right,
               style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
             ),
@@ -629,7 +629,7 @@ class _EarningTable extends pw.StatelessWidget {
           pw.Padding(
             padding: const pw.EdgeInsets.all(4.0),
             child: pw.Text(
-              '1,929.38',
+              details.grossDeduction!,
               textAlign: pw.TextAlign.right,
               style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
             ),

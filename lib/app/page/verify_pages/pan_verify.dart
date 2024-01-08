@@ -14,9 +14,8 @@ class PanVerification extends StatefulWidget {
 class _PanVerificationState extends State<PanVerification> {
   final _formKey = GlobalKey<FormState>();
   final _panController = TextEditingController();
-  bool isLoading = false;
+  bool isLoading = false; 
 
-  //set from appstate pan number to textfield
   @override
   void initState() {
     super.initState();
@@ -24,7 +23,7 @@ class _PanVerificationState extends State<PanVerification> {
   }
 
   setPanNumber() {
-    WidgetsBinding.instance!.addPostFrameCallback((_) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final appState = context.read<AppStateCubit>();
       _panController.text = appState.userDetails!.employeePan!;
     });
@@ -44,8 +43,7 @@ class _PanVerificationState extends State<PanVerification> {
           child: Column(
             children: [
               TextFormField(
-                controller: _panController,
-                // allow only readable
+                controller: _panController, 
                 readOnly: true,
                 decoration: const InputDecoration(
                   labelText: "Enter Pan Number",

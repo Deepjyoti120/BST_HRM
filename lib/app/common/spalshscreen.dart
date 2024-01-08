@@ -31,7 +31,6 @@ class _SplashScreenState extends State<SplashScreen> {
       await Future.delayed(const Duration(seconds: 3));
       SharedPreferences.getInstance().then((value) {
         bool isLogin = value.getBool(IsLogin) ?? false;
-
         if (isLogin) {
           navigator.push(MaterialPageRoute(
             builder: (context) {

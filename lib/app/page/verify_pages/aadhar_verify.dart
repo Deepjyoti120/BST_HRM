@@ -18,6 +18,19 @@ class _AadharVerificationState extends State<AadharVerification> {
   bool isLoading = false;
   String aadharRequestId = "";
   String aadharOtp = "";
+
+  @override
+  void initState() {
+    super.initState();
+    setPanNumber();
+  }
+
+  setPanNumber() {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final appState = context.read<AppStateCubit>();
+      _aadharNo.text = appState.userDetails!.employeeAadharNo!;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppStateCubit>();
@@ -51,6 +64,7 @@ class _AadharVerificationState extends State<AadharVerification> {
               if (aadharRequestId.isNotEmpty)
                 TextFormField(
                   controller: _aadharNo,
+                  readOnly: true,
                   decoration: const InputDecoration(
                     labelText: "Enter OTP",
                     border: OutlineInputBorder(),

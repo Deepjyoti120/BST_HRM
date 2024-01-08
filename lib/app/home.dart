@@ -27,8 +27,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as Img;
 import 'package:geolocator/geolocator.dart';
 
-import 'common/loginpage.dart';
-
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -165,7 +163,7 @@ class _HomePageState extends State<HomePage> {
       final appState = context.read<AppStateCubit>();
       appState.userDetails = user;
       getAttendance();
-      setState(() {});
+      checkAccess(user);
     });
   }
 
@@ -178,15 +176,27 @@ class _HomePageState extends State<HomePage> {
   dynamic size;
   double height = 0.00;
   double width = 0.00;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  void checkAccess(UserDetails user) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (user.employeeStatus == "2") {
+        _scaffoldKey.currentState!.openDrawer();
+      }
+      setState(() {});
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     size = MediaQuery.of(context).size;
     height = size.height;
     width = size.width;
+    final appState = context.watch<AppStateCubit>();
     return Stack(
       children: [
         Scaffold(
+          key: _scaffoldKey,
           drawer: const AppDrawer(), //home menu
           appBar: AppBar(
             centerTitle: false,
@@ -195,510 +205,535 @@ class _HomePageState extends State<HomePage> {
               style: hsSemiBold.copyWith(fontSize: 20),
             ),
           ),
-          body: SafeArea(
-            child: Container(
-              margin: const EdgeInsets.only(top: 12),
-              color: Colors.white,
-              child: SingleChildScrollView(
-                child: Container(
-                  margin: EdgeInsets.only(left: width / 36, right: width / 36),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                            splashColor: AppColor.transparent,
-                            highlightColor: AppColor.transparent,
-                            onTap: () {
-                              if (!attn_finished) {
-                                checkAttendance();
-                              }
-                            },
-                            child: Container(
-                              height: height / 5,
-                              width: width / 2.2,
-                              decoration: BoxDecoration(
-                                  color: AppColor.lightblue,
-                                  borderRadius: BorderRadius.circular(14)),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: width / 36,
-                                    vertical: height / 66),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset(
-                                          BstImages.attn1,
-                                          height: 60,
-                                          fit: BoxFit.fitHeight,
-                                        ),
-                                        const Spacer(),
-                                        attn_finished
-                                            ? const Text("")
-                                            : Text(
-                                                '${hours == 0 ? '' : '${hours.toString().padLeft(2, '0')}:'}${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}',
-                                                style: hsMedium.copyWith(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: AppColor.redbglight),
+          body: appState.userDetails?.employeeStatus == "4"
+              ? SafeArea(
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 12),
+                    color: Colors.white,
+                    child: SingleChildScrollView(
+                      child: Container(
+                        margin: EdgeInsets.only(
+                            left: width / 36, right: width / 36),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                InkWell(
+                                  splashColor: AppColor.transparent,
+                                  highlightColor: AppColor.transparent,
+                                  onTap: () {
+                                    if (!attn_finished) {
+                                      checkAttendance();
+                                    }
+                                  },
+                                  child: Container(
+                                    height: height / 5,
+                                    width: width / 2.2,
+                                    decoration: BoxDecoration(
+                                        color: AppColor.lightblue,
+                                        borderRadius:
+                                            BorderRadius.circular(14)),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: width / 36,
+                                          vertical: height / 66),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset(
+                                                BstImages.attn1,
+                                                height: 60,
+                                                fit: BoxFit.fitHeight,
                                               ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "Attendance".tr,
-                                      style: hsMedium.copyWith(
-                                          fontSize: 11, color: AppColor.black),
-                                    ),
-                                    Card(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 10,
-                                            right: 10,
-                                            top: 2,
-                                            bottom: 2),
-                                        child: attn_finished
-                                            ? const Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text("Checked Out"),
-                                                  Icon(
-                                                    Icons.check,
-                                                    size: 15,
-                                                  )
-                                                ],
-                                              )
-                                            : Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(checkIN
-                                                      ? "Check In"
-                                                      : "Check Out"),
-                                                  const Icon(
-                                                    Icons.arrow_forward_rounded,
-                                                    size: 15,
-                                                  )
-                                                ],
-                                              ),
+                                              const Spacer(),
+                                              attn_finished
+                                                  ? const Text("")
+                                                  : Text(
+                                                      '${hours == 0 ? '' : '${hours.toString().padLeft(2, '0')}:'}${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}',
+                                                      style: hsMedium.copyWith(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: AppColor
+                                                              .redbglight),
+                                                    ),
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            "Attendance".tr,
+                                            style: hsMedium.copyWith(
+                                                fontSize: 11,
+                                                color: AppColor.black),
+                                          ),
+                                          Card(
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10,
+                                                  right: 10,
+                                                  top: 2,
+                                                  bottom: 2),
+                                              child: attn_finished
+                                                  ? const Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text("Checked Out"),
+                                                        Icon(
+                                                          Icons.check,
+                                                          size: 15,
+                                                        )
+                                                      ],
+                                                    )
+                                                  : Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        Text(checkIN
+                                                            ? "Check In"
+                                                            : "Check Out"),
+                                                        const Icon(
+                                                          Icons
+                                                              .arrow_forward_rounded,
+                                                          size: 15,
+                                                        )
+                                                      ],
+                                                    ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          InkWell(
-                            splashColor: AppColor.transparent,
-                            highlightColor: AppColor.transparent,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        const AttendanceView()),
-                              );
-                            },
-                            child: Container(
-                              height: height / 5,
-                              width: width / 2.2,
-                              decoration: BoxDecoration(
-                                  color: AppColor.purple,
-                                  borderRadius: BorderRadius.circular(14)),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: width / 36,
-                                    vertical: height / 66),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset(
-                                          BstImages.attn2,
-                                          height: 100,
-                                          fit: BoxFit.fitHeight,
-                                        ),
-                                        const Spacer(),
-                                        const Icon(
-                                          Icons.arrow_forward,
-                                          color: AppColor.white,
-                                          size: 22,
-                                        )
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Text(
-                                      "View Attendance".tr,
-                                      style: hsMedium.copyWith(
-                                          fontSize: 16, color: AppColor.white),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                            splashColor: AppColor.transparent,
-                            highlightColor: AppColor.transparent,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => ClaimLog()),
-                              );
-                            },
-                            child: Container(
-                              height: height / 5,
-                              width: width / 2.2,
-                              decoration: BoxDecoration(
-                                  color: AppColor.lightred,
-                                  borderRadius: BorderRadius.circular(14)),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: width / 36,
-                                    vertical: height / 66),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset(
-                                          BstImages.attn4,
-                                          height: 65,
-                                          fit: BoxFit.fitHeight,
-                                        ),
-                                        const Spacer(),
-                                        Text("0 KM".tr,
+                                InkWell(
+                                  splashColor: AppColor.transparent,
+                                  highlightColor: AppColor.transparent,
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const AttendanceView()),
+                                    );
+                                  },
+                                  child: Container(
+                                    height: height / 5,
+                                    width: width / 2.2,
+                                    decoration: BoxDecoration(
+                                        color: AppColor.purple,
+                                        borderRadius:
+                                            BorderRadius.circular(14)),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: width / 36,
+                                          vertical: height / 66),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset(
+                                                BstImages.attn2,
+                                                height: 100,
+                                                fit: BoxFit.fitHeight,
+                                              ),
+                                              const Spacer(),
+                                              const Icon(
+                                                Icons.arrow_forward,
+                                                color: AppColor.white,
+                                                size: 22,
+                                              )
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 5,
+                                          ),
+                                          Text(
+                                            "View Attendance".tr,
                                             style: hsMedium.copyWith(
                                                 fontSize: 16,
-                                                color: AppColor.redbglight)),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Text(
-                                      "Attendance Log".tr,
-                                      style: hsMedium.copyWith(
-                                          fontSize: 11, color: AppColor.white),
-                                    ),
-                                    const Card(
-                                      child: Padding(
-                                        padding: EdgeInsets.only(
-                                            left: 10,
-                                            right: 10,
-                                            top: 2,
-                                            bottom: 2),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text("Claim Now"),
-                                            Icon(
-                                              Icons.my_location,
-                                              size: 15,
-                                            )
-                                          ],
-                                        ),
+                                                color: AppColor.white),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ),
-                          InkWell(
-                            splashColor: AppColor.transparent,
-                            highlightColor: AppColor.transparent,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                    builder: (context) => ClaimView()),
-                              );
-                            },
-                            child: Container(
-                              height: height / 5,
-                              width: width / 2.2,
-                              decoration: BoxDecoration(
-                                  color: AppColor.lightgreen,
-                                  borderRadius: BorderRadius.circular(14)),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: width / 36,
-                                    vertical: height / 66),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset(
-                                          BstImages.attn3,
-                                          height: 70,
-                                          fit: BoxFit.fitHeight,
-                                        ),
-                                        const Spacer(),
-                                        const Icon(
-                                          Icons.arrow_forward,
-                                          color: AppColor.black,
-                                          size: 22,
-                                        )
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 15,
-                                    ),
-                                    Text(
-                                      "View".tr,
-                                      style: hsMedium.copyWith(
-                                          fontSize: 12, color: AppColor.black),
-                                    ),
-                                    Text(
-                                      "Claims",
-                                      style: hsRegular.copyWith(
-                                          fontSize: 14, color: AppColor.black),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            const SizedBox(
+                              height: 10,
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          InkWell(
-                            splashColor: AppColor.transparent,
-                            highlightColor: AppColor.transparent,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => ApplyLeaveForm(),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              height: height / 5,
-                              width: width / 2.2,
-                              decoration: BoxDecoration(
-                                color: AppColor
-                                    .lightpurple, // Change color as needed
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: width / 36,
-                                  vertical: height / 66,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset(
-                                          BstImages.applyLeaveIcon,
-                                          height: 90,
-                                          fit: BoxFit.fitHeight,
-                                        ),
-                                        const Spacer(),
-                                        const Icon(
-                                          Icons.arrow_forward,
-                                          color: AppColor.black,
-                                          size: 22,
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 15),
-                                    Text(
-                                      "Apply Leave", // Change text as needed
-                                      style: hsMedium.copyWith(
-                                        fontSize: 12,
-                                        color: AppColor.black,
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                InkWell(
+                                  splashColor: AppColor.transparent,
+                                  highlightColor: AppColor.transparent,
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) => ClaimLog()),
+                                    );
+                                  },
+                                  child: Container(
+                                    height: height / 5,
+                                    width: width / 2.2,
+                                    decoration: BoxDecoration(
+                                        color: AppColor.lightred,
+                                        borderRadius:
+                                            BorderRadius.circular(14)),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: width / 36,
+                                          vertical: height / 66),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset(
+                                                BstImages.attn4,
+                                                height: 65,
+                                                fit: BoxFit.fitHeight,
+                                              ),
+                                              const Spacer(),
+                                              Text("0 KM".tr,
+                                                  style: hsMedium.copyWith(
+                                                      fontSize: 16,
+                                                      color:
+                                                          AppColor.redbglight)),
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          Text(
+                                            "Attendance Log".tr,
+                                            style: hsMedium.copyWith(
+                                                fontSize: 11,
+                                                color: AppColor.white),
+                                          ),
+                                          const Card(
+                                            child: Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: 10,
+                                                  right: 10,
+                                                  top: 2,
+                                                  bottom: 2),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text("Claim Now"),
+                                                  Icon(
+                                                    Icons.my_location,
+                                                    size: 15,
+                                                  )
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ),
-                          InkWell(
-                            splashColor: AppColor.transparent,
-                            highlightColor: AppColor.transparent,
-                            onTap: () {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => ViewLeaveScreen(),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              height: height / 5,
-                              width: width / 2.2,
-                              decoration: BoxDecoration(
-                                color:
-                                    AppColor.orange, // Change color as needed
-                                borderRadius: BorderRadius.circular(14),
-                              ),
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: width / 36,
-                                  vertical: height / 66,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Image.asset(
-                                          BstImages.leaveViewIcon,
-                                          height: 100,
-                                          fit: BoxFit.fitHeight,
-                                        ),
-                                        const Spacer(),
-                                        const Icon(
-                                          Icons.arrow_forward,
-                                          color: AppColor.white,
-                                          size: 22,
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 5),
-                                    Text(
-                                      "View Leave", // Change text as needed
-                                      style: hsMedium.copyWith(
-                                        fontSize: 16,
-                                        color: AppColor.white,
+                                InkWell(
+                                  splashColor: AppColor.transparent,
+                                  highlightColor: AppColor.transparent,
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                          builder: (context) => ClaimView()),
+                                    );
+                                  },
+                                  child: Container(
+                                    height: height / 5,
+                                    width: width / 2.2,
+                                    decoration: BoxDecoration(
+                                        color: AppColor.lightgreen,
+                                        borderRadius:
+                                            BorderRadius.circular(14)),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: width / 36,
+                                          vertical: height / 66),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset(
+                                                BstImages.attn3,
+                                                height: 70,
+                                                fit: BoxFit.fitHeight,
+                                              ),
+                                              const Spacer(),
+                                              const Icon(
+                                                Icons.arrow_forward,
+                                                color: AppColor.black,
+                                                size: 22,
+                                              )
+                                            ],
+                                          ),
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          Text(
+                                            "View".tr,
+                                            style: hsMedium.copyWith(
+                                                fontSize: 12,
+                                                color: AppColor.black),
+                                          ),
+                                          Text(
+                                            "Claims",
+                                            style: hsRegular.copyWith(
+                                                fontSize: 14,
+                                                color: AppColor.black),
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ),
-                        ],
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                InkWell(
+                                  splashColor: AppColor.transparent,
+                                  highlightColor: AppColor.transparent,
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => ApplyLeaveForm(),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    height: height / 5,
+                                    width: width / 2.2,
+                                    decoration: BoxDecoration(
+                                      color: AppColor
+                                          .lightpurple, // Change color as needed
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: width / 36,
+                                        vertical: height / 66,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset(
+                                                BstImages.applyLeaveIcon,
+                                                height: 90,
+                                                fit: BoxFit.fitHeight,
+                                              ),
+                                              const Spacer(),
+                                              const Icon(
+                                                Icons.arrow_forward,
+                                                color: AppColor.black,
+                                                size: 22,
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 15),
+                                          Text(
+                                            "Apply Leave", // Change text as needed
+                                            style: hsMedium.copyWith(
+                                              fontSize: 12,
+                                              color: AppColor.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                InkWell(
+                                  splashColor: AppColor.transparent,
+                                  highlightColor: AppColor.transparent,
+                                  onTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => ViewLeaveScreen(),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    height: height / 5,
+                                    width: width / 2.2,
+                                    decoration: BoxDecoration(
+                                      color: AppColor
+                                          .orange, // Change color as needed
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: width / 36,
+                                        vertical: height / 66,
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Image.asset(
+                                                BstImages.leaveViewIcon,
+                                                height: 100,
+                                                fit: BoxFit.fitHeight,
+                                              ),
+                                              const Spacer(),
+                                              const Icon(
+                                                Icons.arrow_forward,
+                                                color: AppColor.white,
+                                                size: 22,
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 5),
+                                          Text(
+                                            "View Leave", // Change text as needed
+                                            style: hsMedium.copyWith(
+                                              fontSize: 16,
+                                              color: AppColor.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            // Row(
+                            //   children: [
+                            //     Text(
+                            //       "Today's Logs".tr,
+                            //       style: hsSemiBold.copyWith(fontSize: 24),
+                            //     ),
+                            //     const Spacer(),
+                            //     Text(
+                            //       "25 KM".tr,
+                            //       style: hsRegular.copyWith(
+                            //           fontSize: 12, color: AppColor.appcolor),
+                            //     ),
+                            //   ],
+                            // ),
+                            // ListView.builder(
+                            //   itemCount: 3,
+                            //   physics: const NeverScrollableScrollPhysics(),
+                            //   shrinkWrap: true,
+                            //   itemBuilder: (context, index) {
+                            //     return InkWell(
+                            //       splashColor: AppColor.transparent,
+                            //       highlightColor: AppColor.transparent,
+                            //       onTap: () {
+                            //         /*Navigator.push(context, MaterialPageRoute(builder: (context) {
+                            //   return const DailozTaskdetail();
+                            // },));*/
+                            //       },
+                            //       child: Container(
+                            //         margin: EdgeInsets.only(bottom: height / 46),
+                            //         decoration: BoxDecoration(
+                            //             borderRadius: BorderRadius.circular(14),
+                            //             color: AppColor.bggray),
+                            //         child: Padding(
+                            //           padding: EdgeInsets.symmetric(
+                            //               horizontal: width / 36,
+                            //               vertical: height / 66),
+                            //           child: Column(
+                            //             crossAxisAlignment: CrossAxisAlignment.start,
+                            //             children: [
+                            //               Text(
+                            //                 "280, Zoo Road, Guwahati, Assam, 781021",
+                            //                 style: hsMedium.copyWith(
+                            //                     fontSize: 16, color: AppColor.black),
+                            //               ),
+                            //               SizedBox(
+                            //                 height: height / 200,
+                            //               ),
+                            //               Text(
+                            //                 "10:00 AM",
+                            //                 style: hsRegular.copyWith(
+                            //                     fontSize: 14,
+                            //                     color: AppColor.textgray),
+                            //               ),
+                            //               SizedBox(
+                            //                 height: height / 66,
+                            //               ),
+                            //               Row(
+                            //                 children: [
+                            //                   Container(
+                            //                       decoration: BoxDecoration(
+                            //                           color: const Color(0x338F99EB),
+                            //                           borderRadius:
+                            //                               BorderRadius.circular(5)),
+                            //                       child: Padding(
+                            //                         padding: EdgeInsets.symmetric(
+                            //                             horizontal: width / 36,
+                            //                             vertical: height / 120),
+                            //                         child: Text(
+                            //                           "View Image",
+                            //                           style: hsMedium.copyWith(
+                            //                               fontSize: 10,
+                            //                               color: AppColor.appcolor),
+                            //                         ),
+                            //                       )),
+                            //                 ],
+                            //               ),
+                            //             ],
+                            //           ),
+                            //         ),
+                            //       ),
+                            //     );
+                            //   },
+                            // )
+                          ],
+                        ),
                       ),
-                      // Row(
-                      //   children: [
-                      //     Text(
-                      //       "Today's Logs".tr,
-                      //       style: hsSemiBold.copyWith(fontSize: 24),
-                      //     ),
-                      //     const Spacer(),
-                      //     Text(
-                      //       "25 KM".tr,
-                      //       style: hsRegular.copyWith(
-                      //           fontSize: 12, color: AppColor.appcolor),
-                      //     ),
-                      //   ],
-                      // ),
-                      // ListView.builder(
-                      //   itemCount: 3,
-                      //   physics: const NeverScrollableScrollPhysics(),
-                      //   shrinkWrap: true,
-                      //   itemBuilder: (context, index) {
-                      //     return InkWell(
-                      //       splashColor: AppColor.transparent,
-                      //       highlightColor: AppColor.transparent,
-                      //       onTap: () {
-                      //         /*Navigator.push(context, MaterialPageRoute(builder: (context) {
-                      //   return const DailozTaskdetail();
-                      // },));*/
-                      //       },
-                      //       child: Container(
-                      //         margin: EdgeInsets.only(bottom: height / 46),
-                      //         decoration: BoxDecoration(
-                      //             borderRadius: BorderRadius.circular(14),
-                      //             color: AppColor.bggray),
-                      //         child: Padding(
-                      //           padding: EdgeInsets.symmetric(
-                      //               horizontal: width / 36,
-                      //               vertical: height / 66),
-                      //           child: Column(
-                      //             crossAxisAlignment: CrossAxisAlignment.start,
-                      //             children: [
-                      //               Text(
-                      //                 "280, Zoo Road, Guwahati, Assam, 781021",
-                      //                 style: hsMedium.copyWith(
-                      //                     fontSize: 16, color: AppColor.black),
-                      //               ),
-                      //               SizedBox(
-                      //                 height: height / 200,
-                      //               ),
-                      //               Text(
-                      //                 "10:00 AM",
-                      //                 style: hsRegular.copyWith(
-                      //                     fontSize: 14,
-                      //                     color: AppColor.textgray),
-                      //               ),
-                      //               SizedBox(
-                      //                 height: height / 66,
-                      //               ),
-                      //               Row(
-                      //                 children: [
-                      //                   Container(
-                      //                       decoration: BoxDecoration(
-                      //                           color: const Color(0x338F99EB),
-                      //                           borderRadius:
-                      //                               BorderRadius.circular(5)),
-                      //                       child: Padding(
-                      //                         padding: EdgeInsets.symmetric(
-                      //                             horizontal: width / 36,
-                      //                             vertical: height / 120),
-                      //                         child: Text(
-                      //                           "View Image",
-                      //                           style: hsMedium.copyWith(
-                      //                               fontSize: 10,
-                      //                               color: AppColor.appcolor),
-                      //                         ),
-                      //                       )),
-                      //                 ],
-                      //               ),
-                      //             ],
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     );
-                      //   },
-                      // )
-                    ],
+                    ),
                   ),
+                )
+              : const Center(
+                  child: Text("Please Submit Documents"),
                 ),
-              ),
-            ),
-          ),
           // bottomNavigationBar: InkWell(
           //   onTap: () async {
           //     var navigator = Navigator.of(context);

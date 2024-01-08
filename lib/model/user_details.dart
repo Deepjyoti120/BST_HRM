@@ -17,6 +17,8 @@ class UserDetails {
   String? pincode;
   String? employeePhoto;
   String? employeePan;
+  String? employeeAadharNo;
+  String? employeeStatus;
 
   UserDetails({
     this.errorCode,
@@ -58,6 +60,8 @@ class UserDetails {
     pincode = json['pincode'];
     employeePhoto = json['employee_photo'];
     employeePan = json['employee_pan'];
+    employeeAadharNo = json['employee_aadhar_no'];
+    employeeStatus = json['employee_status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -80,6 +84,8 @@ class UserDetails {
     data['pincode'] = pincode;
     data['employee_photo'] = employeePhoto;
     data['employee_pan'] = employeePan;
+    data['employee_aadhar_no'] = employeeAadharNo;
+    data['employee_status'] = employeeStatus;
     return data;
   }
 }
