@@ -180,9 +180,8 @@ class ApiAccess {
         },
       );
       var data = response.data[0];
-      if (data['message'].toString() != '0' &&
-          data['request_id'].toString() != '') {
-        return data['request_id'];
+      if (data['request_id'].toString() != '') {
+        return data['request_id']?.toString();
       }
     } on DioException catch (e) {
       debugPrint(e.message);
@@ -233,7 +232,8 @@ class ApiAccess {
       debugPrint(e.message);
     }
     return null;
-  } 
+  }
+
   Future<List<SalarySlipModel>?> salaryListByMonth({
     required String employeeId,
   }) async {
@@ -248,7 +248,7 @@ class ApiAccess {
       debugPrint(e.message);
     }
     return null;
-  } 
+  }
 
   Future<SalaryDetailsModel?> fetchSalaryDetails({
     required String employeeId,
@@ -264,7 +264,7 @@ class ApiAccess {
       );
       var data = response.data[0];
       // if (data['error_code'].toString() == '0') {
-        return SalaryDetailsModel.fromJson(data);
+      return SalaryDetailsModel.fromJson(data);
       // }
     } on DioException catch (e) {
       debugPrint(e.message);

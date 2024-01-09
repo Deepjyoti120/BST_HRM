@@ -15,9 +15,10 @@ class AadharVerification extends StatefulWidget {
 class _AadharVerificationState extends State<AadharVerification> {
   final _formKey = GlobalKey<FormState>();
   final _aadharNo = TextEditingController();
+  final _aadharOtp = TextEditingController();
   bool isLoading = false;
   String aadharRequestId = "";
-  String aadharOtp = "";
+  // String aadharOtp = "";
 
   @override
   void initState() {
@@ -31,6 +32,7 @@ class _AadharVerificationState extends State<AadharVerification> {
       _aadharNo.text = appState.userDetails!.employeeAadharNo!;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final appState = context.watch<AppStateCubit>();
@@ -46,6 +48,7 @@ class _AadharVerificationState extends State<AadharVerification> {
             children: [
               TextFormField(
                 controller: _aadharNo,
+                readOnly: true,
                 enabled: aadharRequestId.isEmpty,
                 decoration: const InputDecoration(
                   labelText: "Enter Aadhar Number",
@@ -63,8 +66,7 @@ class _AadharVerificationState extends State<AadharVerification> {
               ),
               if (aadharRequestId.isNotEmpty)
                 TextFormField(
-                  controller: _aadharNo,
-                  readOnly: true,
+                  controller: _aadharOtp,
                   decoration: const InputDecoration(
                     labelText: "Enter OTP",
                     border: OutlineInputBorder(),
@@ -117,7 +119,7 @@ class _AadharVerificationState extends State<AadharVerification> {
                             .verifyAadhar(
                           aadharNo: _aadharNo.text,
                           employeeId: appState.userDetails!.employeeId!,
-                          otp: aadharOtp,
+                          otp: _aadharOtp.text,
                           requestId: aadharRequestId,
                         )
                             .then((value) {

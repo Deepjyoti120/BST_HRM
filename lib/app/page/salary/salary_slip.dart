@@ -50,7 +50,7 @@ class _SalarySlipState extends State<SalarySlip> {
               );
             }
             return ListView.builder(
-              itemCount: 12,
+              itemCount: snap?.length,
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 final livedata = snap?[index];
@@ -74,15 +74,21 @@ class _SalarySlipState extends State<SalarySlip> {
                             .fetchSalaryDetails(
                                 employeeId: userDetails.employeeId!,
                                 salaryDate: livedata?.salaryDate ?? "");
-                        await Printing.sharePdf(
-                          bytes: await generateSalarySlip(
-                              PdfPageFormat.a4, salaryDetails!),
-                          filename: livedata?.month ??
-                              "" +
-                                  (livedata!.year ?? '') +
-                                  (userDetails.employeeId ?? '') +
-                                  '.pdf',
-                        );
+                        final pdf = await generateSalarySlip(PdfPageFormat.a4,
+                            salaryDetails!, livedata!.salaryDate);
+                        if (pdf != null) {
+                          String namePdf =
+                              '${livedata.month!}${livedata.year!}${userDetails.employeeId!}.pdf';
+                          await Printing.sharePdf(
+                            bytes: pdf,
+                            // filename: livedata?.month ??
+                            //     "" +
+                            //         (livedata!.year ?? '') +
+                            //         (userDetails.employeeId ?? '') +
+                            //         '.pdf',
+                            filename: namePdf,
+                          );
+                        }
                         setState(() {
                           _loading[index] = false;
                         });

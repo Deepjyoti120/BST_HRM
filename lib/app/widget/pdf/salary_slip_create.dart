@@ -12,140 +12,145 @@ const PdfColor green = PdfColor.fromInt(0xff9ce5d0);
 const PdfColor lightGreen = PdfColor.fromInt(0xffcdf1e7);
 const sep = 120.0;
 
-Future<Uint8List> generateSalarySlip(
+Future<Uint8List?> generateSalarySlip(
   PdfPageFormat format, [
   SalaryDetailsModel? details,
   String? salaryDate, //26-12-2023
 ]) async {
-  //  26-12-2023 convert to DateTime
-  DateTime date = DateFormat("dd-MM-yyyy").parse(salaryDate!);
-  // date to Dec 2023
-  String monthYear = DateFormat("MMM yyyy").format(date);
-  final doc = pw.Document(title: 'Salary Slip', author: 'Deepjyoti Baishya');
-  final profileImage = pw.MemoryImage(
-    (await rootBundle.load(AssetImages.logo)).buffer.asUint8List(),
-  );
-  final pageTheme = await _myPageTheme(format);
-  doc.addPage(
-    pw.MultiPage(
-      pageTheme: pageTheme,
-      // margin: pw.EdgeInsets.all(6),
-      build: (pw.Context context) => [
-        pw.Container(
-          decoration: pw.BoxDecoration(
-            borderRadius: pw.BorderRadius.circular(4),
-            border: pw.Border.all(color: PdfColors.black, width: 1.5),
-          ),
-          // height: ,
-          child: pw.Column(children: [
-            pw.Padding(
-              padding: const pw.EdgeInsets.all(12),
-              child: pw.Column(
-                children: [
-                  pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: pw.CrossAxisAlignment.start,
-                    children: [
-                      pw.Image(profileImage, height: 80, width: 80),
-                      pw.Container(
-                        alignment: pw.Alignment.center,
-                        height: 80,
-                        child: pw.Text(
-                          'dikhita retail private limited'.toUpperCase(),
-                          style: pw.TextStyle(
-                            fontSize: 18,
-                            fontWeight: pw.FontWeight.bold,
+  try {
+    //  26-12-2023 convert to DateTime
+    DateTime date = DateFormat("dd-MM-yyyy").parse(salaryDate!);
+    // date to Dec 2023
+    String monthYear = DateFormat("MMM yyyy").format(date);
+    final doc = pw.Document(title: 'Salary Slip', author: 'Deepjyoti Baishya');
+    final profileImage = pw.MemoryImage(
+      (await rootBundle.load(AssetImages.logo)).buffer.asUint8List(),
+    );
+    final pageTheme = await _myPageTheme(format);
+    doc.addPage(
+      pw.MultiPage(
+        pageTheme: pageTheme,
+        // margin: pw.EdgeInsets.all(6),
+        build: (pw.Context context) => [
+          pw.Container(
+            decoration: pw.BoxDecoration(
+              borderRadius: pw.BorderRadius.circular(4),
+              border: pw.Border.all(color: PdfColors.black, width: 1.5),
+            ),
+            // height: ,
+            child: pw.Column(children: [
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(12),
+                child: pw.Column(
+                  children: [
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Image(profileImage, height: 80, width: 80),
+                        pw.Container(
+                          alignment: pw.Alignment.center,
+                          height: 80,
+                          child: pw.Text(
+                            'dikhita retail private limited'.toUpperCase(),
+                            style: pw.TextStyle(
+                              fontSize: 18,
+                              fontWeight: pw.FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                      pw.Text('PAY SLIP',
-                          style: pw.TextStyle(
-                            fontSize: 14,
-                            fontWeight: pw.FontWeight.bold,
-                          )),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            pw.SizedBox(height: 30),
-            pw.Container(
-                decoration: pw.BoxDecoration(
-                  border: pw.Border.all(color: PdfColors.black, width: 1.5),
+                        pw.Text('PAY SLIP',
+                            style: pw.TextStyle(
+                              fontSize: 14,
+                              fontWeight: pw.FontWeight.bold,
+                            )),
+                      ],
+                    ),
+                  ],
                 ),
-                width: double.infinity,
-                child: pw.Column(children: [
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.all(4),
-                    child: pw.Text(
-                      'Pay Slip For The Month Of $monthYear',
-                      style: pw.TextStyle(
-                        fontSize: 12,
-                        fontWeight: pw.FontWeight.bold,
+              ),
+              pw.SizedBox(height: 30),
+              pw.Container(
+                  decoration: pw.BoxDecoration(
+                    border: pw.Border.all(color: PdfColors.black, width: 1.5),
+                  ),
+                  width: double.infinity,
+                  child: pw.Column(children: [
+                    pw.Padding(
+                      padding: const pw.EdgeInsets.all(4),
+                      child: pw.Text(
+                        'Pay Slip For The Month Of $monthYear',
+                        style: pw.TextStyle(
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                ])),
-            // pw.SizedBox(height: 10),
-            _EmployeeDetailsRow(details!),
-            // add divider
-            pw.Container(
-              height: 1.5,
-              width: double.infinity,
-              color: PdfColors.black,
-            ),
-            _EarningTable(details!),
-            pw.Container(
-              height: 0.5,
-              width: double.infinity,
-              color: PdfColors.grey,
-            ),
-            pw.Padding(
-              padding: const pw.EdgeInsets.all(4),
-              child: pw.Text(
-                details.netPay!,
-                style: pw.TextStyle(
-                  fontSize: 10,
-                  fontWeight: pw.FontWeight.bold,
-                ),
+                  ])),
+              // pw.SizedBox(height: 10),
+              _EmployeeDetailsRow(details!),
+              // add divider
+              pw.Container(
+                height: 1.5,
+                width: double.infinity,
+                color: PdfColors.black,
               ),
-            ),
-            pw.Container(
-              height: 0.5,
-              width: double.infinity,
-              color: PdfColors.grey,
-            ),
-            pw.Padding(
-              padding: const pw.EdgeInsets.all(4),
-              child: pw.Text(
-                'This is a computer generated document, hence no signature is required.',
-                style: pw.TextStyle(
-                  fontSize: 10,
-                  fontWeight: pw.FontWeight.bold,
-                ),
+              _EarningTable(details!),
+              pw.Container(
+                height: 0.5,
+                width: double.infinity,
+                color: PdfColors.grey,
               ),
-            ),
-            pw.Container(
-              height: 1.5,
-              width: double.infinity,
-              color: PdfColors.black,
-            ),
-            pw.Padding(
-              padding: const pw.EdgeInsets.all(4),
-              child: pw.Text(
-                  'DIKHITA RETAILS PRIVATE LIMITED\nCIN: U72900AS2023PTC024175 &NBSP;&NBSP; PAN: AAJCD8391D &NBSP;&NBSP; TAN: SHLD06162C\nHead Office Address: 2nd Floor, Dikhita Corporate Office, Dharapur, Kamrup Metropolitan, Assam, Pin-781014',
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(4),
+                child: pw.Text(
+                  details.netPay!,
                   style: pw.TextStyle(
                     fontSize: 10,
                     fontWeight: pw.FontWeight.bold,
                   ),
-                  textAlign: pw.TextAlign.center),
-            ),
-          ]),
-        ),
-      ],
-    ),
-  );
-  return doc.save();
+                ),
+              ),
+              pw.Container(
+                height: 0.5,
+                width: double.infinity,
+                color: PdfColors.grey,
+              ),
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(4),
+                child: pw.Text(
+                  'This is a computer generated document, hence no signature is required.',
+                  style: pw.TextStyle(
+                    fontSize: 10,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+              ),
+              pw.Container(
+                height: 1.5,
+                width: double.infinity,
+                color: PdfColors.black,
+              ),
+              pw.Padding(
+                padding: const pw.EdgeInsets.all(4),
+                child: pw.Text(
+                    'DIKHITA RETAILS PRIVATE LIMITED\nCIN: U72900AS2023PTC024175 &NBSP;&NBSP; PAN: AAJCD8391D &NBSP;&NBSP; TAN: SHLD06162C\nHead Office Address: 2nd Floor, Dikhita Corporate Office, Dharapur, Kamrup Metropolitan, Assam, Pin-781014',
+                    style: pw.TextStyle(
+                      fontSize: 10,
+                      fontWeight: pw.FontWeight.bold,
+                    ),
+                    textAlign: pw.TextAlign.center),
+              ),
+            ]),
+          ),
+        ],
+      ),
+    );
+    return doc.save();
+  } catch (e) {
+    print(e);
+  }
+  return null;
 }
 
 Future<pw.PageTheme> _myPageTheme(PdfPageFormat format) async {
