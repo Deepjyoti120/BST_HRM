@@ -14,7 +14,9 @@ class PanVerification extends StatefulWidget {
 class _PanVerificationState extends State<PanVerification> {
   final _formKey = GlobalKey<FormState>();
   final _panController = TextEditingController();
-  bool isLoading = false; 
+  bool isLoading = false;
+  bool isVerified = true;
+  bool isScreenLoading = true;
 
   @override
   void initState() {
@@ -26,6 +28,22 @@ class _PanVerificationState extends State<PanVerification> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final appState = context.read<AppStateCubit>();
       _panController.text = appState.userDetails!.employeePan!;
+      await ApiAccess()
+          .kycSettings(employeeId: appState.userDetails!.employeeId!)
+          .then((value) {
+        if (value!.panVerification == '1') {
+          setState(() {
+            isVerified = true;
+          });
+        } else {
+          setState(() {
+            isVerified = false;
+          });
+        }
+      });
+      setState(() {
+        isScreenLoading = false;
+      });
     });
   }
 
@@ -36,69 +54,83 @@ class _PanVerificationState extends State<PanVerification> {
       appBar: AppBar(
         title: const Text("Pan Verification"),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _panController, 
-                readOnly: true,
-                decoration: const InputDecoration(
-                  labelText: "Enter Pan Number",
-                  border: OutlineInputBorder(),
-                  contentPadding:
-                      EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  alignLabelWithHint: true,
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter pan number';
-                  }
-                  return null;
-                },
+      body: isScreenLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: Colors.black,
               ),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                  ),
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      setState(() {
-                        isLoading = true;
-                      });
-                      ApiAccess()
-                          .verifyPan(
-                        panNo: _panController.text,
-                        employeeId: appState.userDetails!.employeeId!,
-                      )
-                          .then((value) {
-                        if (value) {
-                          Navigator.pop(context);
-                        } else {
-                          setState(() {
-                            _panController.text = "";
-                            isLoading = false;
-                          });
+            )
+          : Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _panController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                        labelText: "Enter Pan Number",
+                        border: OutlineInputBorder(),
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                        alignLabelWithHint: true,
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter pan number';
                         }
-                      });
-                    }
-                  },
-                  child: isLoading
-                      ? const DLoading()
-                      : const Text(
-                          "Verify",
-                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        return null;
+                      },
+                    ),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              isVerified ? Colors.green : Colors.black,
                         ),
+                        onPressed: () async {
+                          if (isVerified) {
+                            return;
+                          }
+                          if (_formKey.currentState!.validate()) {
+                            setState(() {
+                              isLoading = true;
+                            });
+                            ApiAccess()
+                                .verifyPan(
+                              panNo: _panController.text,
+                              employeeId: appState.userDetails!.employeeId!,
+                            )
+                                .then((value) {
+                              if (value) {
+                                Navigator.pop(context);
+                              } else {
+                                setState(() {
+                                  _panController.text = "";
+                                  isLoading = false;
+                                });
+                              }
+                            });
+                          }
+                        },
+                        child: isLoading
+                            ? const DLoading()
+                            : Text(
+                                isVerified ? "Verified" : "Verify",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: isVerified
+                                        ? Colors.white
+                                        : Colors.white),
+                              ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }
