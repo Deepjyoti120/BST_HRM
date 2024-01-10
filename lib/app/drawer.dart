@@ -40,8 +40,14 @@ class _AppDrawerState extends State<AppDrawer> {
                   children: [
                     SizedBox(
                       height: 60,
-                      child: Image.network(
-                        appState.userDetails?.employeePhoto! ?? '',
+                      width: 60,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(60),
+                        child: Image.network(
+                          appState.userDetails?.employeePhoto! ?? '',
+                          fit: BoxFit.fill,
+                          alignment: Alignment.center,
+                        ),
                       ),
                     ),
                     Text(

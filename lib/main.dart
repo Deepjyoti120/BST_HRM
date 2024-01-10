@@ -14,9 +14,12 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  runApp(BlocProvider<AppStateCubit>(
+  runApp(
+    BlocProvider<AppStateCubit>(
       create: (context) => AppStateCubit(context: context),
-      child: const MyApp()));
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatefulWidget {
