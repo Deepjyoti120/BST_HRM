@@ -30,6 +30,8 @@ class _BankVerifyVerificationState extends State<BankVerifyVerification> {
       await ApiAccess()
           .kycSettings(employeeId: appState.userDetails!.employeeId!)
           .then((value) {
+        _accountNumber.text = value!.employeeBankVerificationAccNo!;
+        _ifscCode.text = value.employeeBankVerificationIfsc!;
         if (value!.bankVerification == '1') {
           setState(() {
             isVerified = true;
@@ -67,6 +69,7 @@ class _BankVerifyVerificationState extends State<BankVerifyVerification> {
                   children: [
                     TextFormField(
                       controller: _accountNumber,
+                      readOnly: true,
                       decoration: const InputDecoration(
                         labelText: "Enter Account Number",
                         border: OutlineInputBorder(),
@@ -84,6 +87,7 @@ class _BankVerifyVerificationState extends State<BankVerifyVerification> {
                     const SizedBox(height: 10),
                     TextFormField(
                       controller: _ifscCode,
+                      readOnly: true,
                       decoration: const InputDecoration(
                         labelText: "Enter IFSC Code",
                         border: OutlineInputBorder(),
