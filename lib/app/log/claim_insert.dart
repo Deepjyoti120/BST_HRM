@@ -301,6 +301,7 @@ class _ClaimLogState extends State<ClaimLog> {
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             const Text("Select Type"), 
+            // changed new line
             Row(
               children: [
                 ElevatedButton(
