@@ -271,4 +271,44 @@ class ApiAccess {
     }
     return null;
   }
+//   https://ragroup.ind.in/api/check_claim
+// security_authentication_id=d347774d04690c2c5e7457a8a03e02e7
+// security_token=2b45da5375d29a009023e25f27a2ddd4
+// employee_id=1
+// [
+//     {
+//         "error_code": "0",
+//         "claim": "1",
+//         "claim_type": ""
+//     }
+// ]
+
+// if(claim==1){ u can request for a new claim }
+// if(claim==0)
+// {
+// 	already a claim is running. u have to end this claim using end trip or end mark log
+// 	if(claim_type=='2 Wheeler'){ the running claim is 2 Wheeler }
+// 	if(claim_type=='4 Wheeler'){ the running claim is 4 Wheeler }
+// }
+  Future<Map<String, dynamic>> checkClaim({required String employeeId}) async {
+    try {
+      final response = await _dio.post(
+        'check_claim',
+        data: {'employee_id': employeeId},
+      );
+      var data = response.data[0];
+      if (data['error_code'].toString() == '0') {
+        return {
+          'claim': data['claim'].toString(),
+          'claim_type': data['claim_type'].toString(),
+        };
+      }
+    } on DioException catch (e) {
+      debugPrint(e.message);
+    }
+    return {
+      'claim': '0',
+      'claim_type': '',
+    };
+  }
 }

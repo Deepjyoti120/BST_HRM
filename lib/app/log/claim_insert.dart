@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
-
 import 'package:bsthrm/app/log/claim_view.dart';
 import 'package:bsthrm/global/widgets.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:bsthrm/services/api_access.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -35,6 +33,12 @@ class ClaimLog extends StatefulWidget {
 class _ClaimLogState extends State<ClaimLog> {
   String _selectedVehicle = '';
   String? ping = '';
+  @override
+  void initState() {
+    getUser();
+    setInitDate();
+    super.initState();
+  }
 
   void _selectVehicle(String vehicle) {
     setState(() {
@@ -184,7 +188,6 @@ class _ClaimLogState extends State<ClaimLog> {
               'Content-Type': 'application/json',
             },
           );
-
           setState(() {
             _loading = false;
           });
@@ -270,6 +273,18 @@ class _ClaimLogState extends State<ClaimLog> {
   }
 
   double meter = 0;
+  Map checkClaimData = {};
+  Future checkClaim() async {
+    // ApiAccess().checkClaim(employeeId: user.employeeId!);
+    checkClaimData = await ApiAccess().checkClaim(employeeId: user.employeeId!);
+    // print(checkClaim);
+    if (checkClaimData['claim'] == "1") {
+      ping = "Mark Log";
+    } else {
+      ping = "End Trip";
+    }
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -280,14 +295,14 @@ class _ClaimLogState extends State<ClaimLog> {
       body: SingleChildScrollView(
         child: Container(
           height: height,
-          margin: EdgeInsets.all(10),
+          margin: const EdgeInsets.all(10),
           color: Colors.white,
           width: (width > 500) ? 500 : width,
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text("Select Type"),
+            const Text("Select Type"), 
             Row(
-              children: <Widget>[
+              children: [
                 ElevatedButton(
                   onPressed: () => _selectVehicle('2 Wheeler'),
                   style: ElevatedButton.styleFrom(
@@ -295,12 +310,12 @@ class _ClaimLogState extends State<ClaimLog> {
                         ? AppColor.PRIMARY_COLOR
                         : AppColor.GREY_40,
                   ),
-                  child: Text(
+                  child: const Text(
                     '2 Wheeler',
                     style: TextStyle(color: AppColor.white),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () => _selectVehicle('4 Wheeler'),
                   style: ElevatedButton.styleFrom(
@@ -308,12 +323,12 @@ class _ClaimLogState extends State<ClaimLog> {
                         ? AppColor.PRIMARY_COLOR
                         : AppColor.GREY_40,
                   ),
-                  child: Text(
+                  child: const Text(
                     '4 Wheeler',
                     style: TextStyle(color: AppColor.white),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
               ],
             ),
             Row(
@@ -325,12 +340,12 @@ class _ClaimLogState extends State<ClaimLog> {
                         ? AppColor.PRIMARY_COLOR
                         : AppColor.GREY_40,
                   ),
-                  child: Text(
+                  child: const Text(
                     'Transport',
                     style: TextStyle(color: AppColor.white),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 ElevatedButton(
                   onPressed: () => _selectVehicle('Others'),
                   style: ElevatedButton.styleFrom(
@@ -338,14 +353,14 @@ class _ClaimLogState extends State<ClaimLog> {
                         ? AppColor.PRIMARY_COLOR
                         : AppColor.GREY_40,
                   ),
-                  child: Text(
+                  child: const Text(
                     'Others',
                     style: TextStyle(color: AppColor.white),
                   ),
                 ),
               ],
             ),
-            SizedBox(
+            const SizedBox(
               height: 15,
             ),
             Visibility(
@@ -355,7 +370,7 @@ class _ClaimLogState extends State<ClaimLog> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      child: Text("Add Image"),
+                      child: const Text("Add Image"),
                     ),
                     InkWell(
                       onTap: () {
@@ -372,18 +387,18 @@ class _ClaimLogState extends State<ClaimLog> {
                               width: 1.0,
                             )),
                         child: Padding(
-                          padding: EdgeInsets.only(
+                          padding: const EdgeInsets.only(
                               left: 10, top: 12, bottom: 12, right: 10),
                           child: Column(
                             children: [
                               Visibility(
                                 visible: base64Image == "",
-                                child: Icon(Icons.add,
+                                child: const Icon(Icons.add,
                                     color: AppColor.BORDER_COLOR),
                               ),
                               Visibility(
                                 visible: base64Image != "",
-                                child: Icon(Icons.check_circle,
+                                child: const Icon(Icons.check_circle,
                                     color: Colors.green),
                               )
                             ],
@@ -391,13 +406,13 @@ class _ClaimLogState extends State<ClaimLog> {
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     Container(
                       child: TextFormField(
                         controller: amountController,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           labelText: 'Amount',
                           border: OutlineInputBorder(), // Adding a border
                           contentPadding: EdgeInsets.symmetric(
@@ -414,13 +429,13 @@ class _ClaimLogState extends State<ClaimLog> {
                         maxLines: 1, // This allows the field to be multiline
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 15,
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        const Text(
                           "Date",
                           style: TextStyle(
                               fontSize: 12,
@@ -433,10 +448,10 @@ class _ClaimLogState extends State<ClaimLog> {
                                     context: context,
                                     initialDate: fromDate_,
                                     firstDate: DateTime.now()
-                                        .subtract(Duration(days: 366)),
+                                        .subtract(const Duration(days: 366)),
                                     // firstDate: fromDate_,
-                                    lastDate:
-                                        DateTime.now().add(Duration(days: 366)))
+                                    lastDate: DateTime.now()
+                                        .add(const Duration(days: 366)))
                                 .then((value) {
                               if (value != null) {
                                 fromDate_ = value;
@@ -449,7 +464,7 @@ class _ClaimLogState extends State<ClaimLog> {
                             });
                           },
                           child: Container(
-                            margin: EdgeInsets.only(top: 3),
+                            margin: const EdgeInsets.only(top: 3),
                             decoration: BoxDecoration(
                               border: Border.all(
                                 color: AppColor.GREY_40,
@@ -460,7 +475,7 @@ class _ClaimLogState extends State<ClaimLog> {
                               borderRadius: BorderRadius.circular(4.0),
                             ),
                             child: Container(
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                   left: 10, right: 10, top: 7, bottom: 7),
                               child: Row(
                                 mainAxisAlignment:
@@ -468,26 +483,26 @@ class _ClaimLogState extends State<ClaimLog> {
                                 children: [
                                   Text(
                                     fromDateShow,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                         color: AppColor.GREY_60,
                                         fontSize: 12,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  Icon(Icons.calendar_today,
+                                  const Icon(Icons.calendar_today,
                                       size: 15, color: AppColor.PRIMARY_COLOR)
                                 ],
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
                         Container(
-                          margin: EdgeInsets.only(left: 0, right: 0),
+                          margin: const EdgeInsets.only(left: 0, right: 0),
                           child: TextFormField(
                             controller: reasonController,
-                            decoration: InputDecoration(
+                            decoration: const InputDecoration(
                               labelText: 'Comment',
                               border: OutlineInputBorder(),
                               // Adding a border
@@ -501,35 +516,33 @@ class _ClaimLogState extends State<ClaimLog> {
                                 3, // This allows the field to be multiline
                           ),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 15,
                         ),
                       ],
                     )
                   ],
                 )),
-            SizedBox(
-              height: 15,
-            ),
+            const SizedBox(height: 15),
             DAnimation(
                 visible: _loading == false && ping != "",
                 child: InkWell(
                   onTap: () {
-                    sendClaim();
+                    sendClaim().then((value) => checkClaim());
                   },
                   child: Container(
-                    margin: EdgeInsets.only(left: 5, right: 5),
+                    margin: const EdgeInsets.only(left: 5, right: 5),
                     height: 36,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(50),
-                        gradient: LinearGradient(colors: [
+                        gradient: const LinearGradient(colors: [
                           AppColor.PRIMARY_COLOR,
                           AppColor.PRIMARY_COLOR,
                         ])),
                     child: Center(
                       child: Text(
                         ping ?? "",
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                     ),
@@ -566,10 +579,13 @@ class _ClaimLogState extends State<ClaimLog> {
 
       if (originalImage != null) {
         // Resize image to 50% of its original quality
-        final Img.Image resizedImage = Img.copyResize(originalImage, width: originalImage.width ~/ 2);
+        final Img.Image resizedImage =
+            Img.copyResize(originalImage, width: originalImage.width ~/ 2);
 
         // Create an encoder with specific quality settings (adjust quality as needed)
-        final Img.PngEncoder encoder = Img.PngEncoder(level: 1); // Adjust the compression level here (1 is just an example)
+        final Img.PngEncoder encoder = Img.PngEncoder(
+            level:
+                1); // Adjust the compression level here (1 is just an example)
 
         // Encode resized image to PNG format with reduced quality
         final List<int> resizedBytes = encoder.encode(resizedImage);
@@ -589,25 +605,19 @@ class _ClaimLogState extends State<ClaimLog> {
   }
 
   getUser() {
-    SharedPreferences.getInstance().then((value) {
+    SharedPreferences.getInstance().then((value) async {
       var _data = value.getString(Userdetails);
       var j_data = jsonDecode(_data!);
       print("-----> $j_data");
       user = UserDetails.fromJson(j_data[0]);
+      await checkClaim();
       setState(() {});
     });
   }
 
-  @override
-  void initState() {
-    getUser();
-    setInitDate();
-    super.initState();
-  }
-
   PreferredSizeWidget globalAppBar(title) {
     return AppBar(
-      iconTheme: IconThemeData(
+      iconTheme: const IconThemeData(
         color: Colors.black,
       ),
       elevation: 1,
@@ -616,7 +626,7 @@ class _ClaimLogState extends State<ClaimLog> {
       centerTitle: true,
       title: Text(
         title,
-        style: TextStyle(
+        style: const TextStyle(
             fontWeight: FontWeight.normal, fontSize: 17, color: Colors.black),
       ),
     );

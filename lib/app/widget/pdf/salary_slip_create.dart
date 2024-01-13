@@ -134,7 +134,7 @@ Future<Uint8List?> generateSalarySlip(
               pw.Padding(
                 padding: const pw.EdgeInsets.all(4),
                 child: pw.Text(
-                    'DIKHITA RETAILS PRIVATE LIMITED\nCIN: U72900AS2023PTC024175 &NBSP;&NBSP; PAN: AAJCD8391D &NBSP;&NBSP; TAN: SHLD06162C\nHead Office Address: 2nd Floor, Dikhita Corporate Office, Dharapur, Kamrup Metropolitan, Assam, Pin-781014',
+                    'DIKHITA RETAILS PRIVATE LIMITED\nCIN: U72900AS2023PTC024175 PAN: AAJCD8391D TAN: SHLD06162C\nHead Office Address: 2nd Floor, Dikhita Corporate Office, Dharapur, Kamrup Metropolitan, Assam, Pin-781014',
                     style: pw.TextStyle(
                       fontSize: 10,
                       fontWeight: pw.FontWeight.bold,
